@@ -49,7 +49,7 @@ class DownloadManager {
     this.disableCreateObjectURL = disableCreateObjectURL;
   }
 
-  downloadUrl(url, filename) {
+  downloadUrl(url, filename, shouldPrint) { // TODO do we ever get this scenario?
     if (!createValidAbsoluteUrl(url, 'http://example.com')) {
       return; // restricted/invalid URL
     }
@@ -66,7 +66,7 @@ class DownloadManager {
     download(blobUrl, filename);
   }
 
-  download(blob, url, filename) {
+  download(blob, url, filename, shouldPrint) {
     if (navigator.msSaveBlob) {
       // IE10 / IE11
       if (!navigator.msSaveBlob(blob, filename)) {
@@ -82,6 +82,7 @@ class DownloadManager {
     }
 
     let blobUrl = URL.createObjectURL(blob);
+    if(shouldPrint) blobUrl += '#shield-pdfjs-download-print'
     download(blobUrl, filename);
   }
 }

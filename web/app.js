@@ -723,9 +723,9 @@ let PDFViewerApplication = {
     });
   },
 
-  download() {
+  download(shouldPrint) {
     function downloadByUrl() {
-      downloadManager.downloadUrl(url, filename);
+      downloadManager.downloadUrl(url, filename, shouldPrint);
     }
 
     let url = this.baseUrl;
@@ -749,7 +749,7 @@ let PDFViewerApplication = {
 
     this.pdfDocument.getData().then(function(data) {
       const blob = new Blob([data], { type: 'application/pdf', });
-      downloadManager.download(blob, url, filename);
+      downloadManager.download(blob, url, filename, shouldPrint);
     }).catch(downloadByUrl); // Error occurred, try downloading with the URL.
   },
 
@@ -1339,7 +1339,7 @@ let PDFViewerApplication = {
     eventBus.on('presentationmodechanged', webViewerPresentationModeChanged);
     eventBus.on('presentationmode', webViewerPresentationMode);
     eventBus.on('openfile', webViewerOpenFile);
-    eventBus.on('print', webViewerPrint);
+    eventBus.on('print', webViewerDownload.bind(null, true)); // shield modification
     eventBus.on('download', webViewerDownload);
     eventBus.on('firstpage', webViewerFirstPage);
     eventBus.on('lastpage', webViewerLastPage);
@@ -1457,7 +1457,7 @@ let PDFViewerApplication = {
 let validateFileURL;
 if (typeof PDFJSDev === 'undefined' || PDFJSDev.test('GENERIC')) {
   const HOSTED_VIEWER_ORIGINS = ['null',
-    'http://mozilla.github.io', 'https://mozilla.github.io'];
+    'pdfjs://dist'];
   validateFileURL = function validateFileURL(file) {
     if (file === undefined) {
       return;
@@ -1910,8 +1910,8 @@ function webViewerOpenFile() {
 function webViewerPrint() {
   window.print();
 }
-function webViewerDownload() {
-  PDFViewerApplication.download();
+function webViewerDownload(shouldPrint) {
+  PDFViewerApplication.download(shouldPrint);
 }
 function webViewerFirstPage() {
   if (PDFViewerApplication.pdfDocument) {
