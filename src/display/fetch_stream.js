@@ -97,7 +97,7 @@ class PDFFetchStreamReader {
     }
 
     let url = source.url;
-    fetch(url, createFetchOptions(this._headers, this._withCredentials,
+    fetch(url, createFetchOptions(this._headers, true,
         this._abortController)).then((response) => {
       if (!validateResponseStatus(response.status)) {
         throw createResponseStatusError(response.status, url);
@@ -205,7 +205,7 @@ class PDFFetchStreamRangeReader {
     let rangeStr = begin + '-' + (end - 1);
     this._headers.append('Range', 'bytes=' + rangeStr);
     let url = source.url;
-    fetch(url, createFetchOptions(this._headers, this._withCredentials,
+    fetch(url, createFetchOptions(this._headers, true,
         this._abortController)).then((response) => {
       if (!validateResponseStatus(response.status)) {
         throw createResponseStatusError(response.status, url);
